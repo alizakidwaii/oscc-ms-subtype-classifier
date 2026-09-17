@@ -1,0 +1,23 @@
+# Raw source data (large, publicly re-downloadable -- see data/raw/README.md)
+data/raw/*.gz
+data/raw/*.xlsx
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Logs
+logs/*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,54 @@
+digraph Architecture {
+    rankdir=TB;
+    fontname="Helvetica";
+    node [fontname="Helvetica", fontsize=11, shape=box, style="rounded,filled", fillcolor="#EAF2FB", color="#2C5F8A", margin="0.15,0.1"];
+    edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+    subgraph cluster_raw {
+        label="Raw Public Data Sources";
+        style="rounded,dashed";
+        color="#888888";
+        fontsize=11;
+        xena [label="UCSC Xena Browser\nTCGA-HNSC Expression Matrix\n(566 samples x 20,530 genes)"];
+        nature [label="TCGA Nature 2015\nSupplementary Table S7.2\n(Subtype labels, 279 patients)"];
+    }
+
+    subgraph cluster_pipeline {
+        label="OSCC-MS Classifier Pipeline (CLI, main.py)";
+        style="rounded,dashed";
+        color="#888888";
+        fontsize=11;
+        data_module [label="data_module.py\n(Ingestion & Merge)", fillcolor="#DDEEFB"];
+        dataset [label="oscc_gene_expression.csv\n279 patients x 35 genes", shape=note, fillcolor="#FFF6D9", color="#B8860B"];
+        preprocessing_module [label="preprocessing_module.py\n(Validation & Split)", fillcolor="#DDEEFB"];
+        training_module [label="training_module.py\n(Random Forest + CV)", fillcolor="#DDEEFB"];
+        model [label="rf_model.joblib\n(Trained Model)", shape=cylinder, fillcolor="#FFF6D9", color="#B8860B"];
+        evaluation_module [label="evaluation_module.py\n(Metrics & Plots)", fillcolor="#DDEEFB"];
+        prediction_module [label="prediction_module.py\n(Single-Patient Inference)", fillcolor="#DDEEFB"];
+    }
+
+    config [label="config.py / logger.py\n(Shared configuration & logging)", shape=component, fillcolor="#F0F0F0", color="#777777"];
+
+    new_patient [label="New Patient CSV\n(gene expression input)", shape=note, fillcolor="#E8FBE8", color="#3A7D3A"];
+    outputs [label="outputs/\nmetrics.json, confusion matrix,\nROC curve, feature importance", shape=folder, fillcolor="#E8FBE8", color="#3A7D3A"];
+    prediction_out [label="Prediction Result\n(subtype, probability,\ntop genes)", shape=folder, fillcolor="#E8FBE8", color="#3A7D3A"];
+
+    xena -> data_module;
+    nature -> data_module;
+    data_module -> dataset;
+    dataset -> preprocessing_module;
+    preprocessing_module -> training_module;
+    training_module -> model;
+    model -> evaluation_module;
+    preprocessing_module -> evaluation_module [style=dashed, label="test split"];
+    evaluation_module -> outputs;
+    model -> prediction_module;
+    new_patient -> prediction_module;
+    prediction_module -> prediction_out;
+
+    config -> data_module [style=dotted, arrowhead=none];
+    config -> preprocessing_module [style=dotted, arrowhead=none];
+    config -> training_module [style=dotted, arrowhead=none];
+    config -> evaluation_module [style=dotted, arrowhead=none];
+    config -> prediction_module [style=dotted, arrowhead=none];
+}

@@ -1,0 +1,24 @@
+digraph Workflow {
+    rankdir=LR;
+    fontname="Helvetica";
+    nodesep=0.5;
+    ranksep=0.7;
+    node [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#EAF2FB", color="#2C5F8A", margin="0.2,0.15"];
+    edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+    start [label="Start", shape=ellipse, fillcolor="#DDEEFB", width=0.9];
+
+    s1 [label="1. build-dataset\n\nMerge expression + subtype\nfiles by barcode, filter\ntumor samples, subset\ngene panel, recode label"];
+
+    s2 [label="2. train\n\nValidate schema, stratified\nsplit, 5-fold CV (ROC-AUC),\nfit Random Forest,\nsave model"];
+
+    s3 [label="3. evaluate\n\nScore test set, compute\naccuracy/precision/recall/\nF1/ROC-AUC, save plots\n+ metrics.json"];
+
+    s4 [label="4. predict\n\nValidate input CSV, predict\nsubtype + probabilities,\nrank top genes, return JSON"];
+
+    err [label="Reject with\nclear error", fillcolor="#FDEBEB", color="#B03A3A", width=0.9];
+    finish [label="End", shape=ellipse, fillcolor="#DDEEFB", width=0.9];
+
+    start -> s1 -> s2 -> s3 -> s4 -> finish;
+    s4 -> err [label="  invalid input", style=dashed, constraint=false];
+}

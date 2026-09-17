@@ -1,0 +1,44 @@
+digraph ClassDiagram {
+    rankdir=TB;
+    fontname="Helvetica";
+    node [fontname="Helvetica", fontsize=10, shape=record, style=filled, fillcolor="#EAF2FB", color="#2C5F8A"];
+    edge [fontname="Helvetica", fontsize=9, color="#555555"];
+
+    config [label="{config.py|+ ALL_GENES : list\l+ RF_PARAMS : dict\l+ RANDOM_SEED : int\l+ paths (DATA_DIR, MODELS_DIR, ...)\l|+ ensure_directories()\l}"];
+
+    data [label="{data_module.py|- RAW_EXPRESSION_PATH\l- RAW_SUBTYPE_PATH\l|+ build_dataset(save) : DataFrame\l+ _load_subtype_labels()\l+ _load_expression_matrix()\l+ _patient_barcode(sample_barcode)\l}"];
+
+    preprocessing [label="{preprocessing_module.py||+ load_dataset(path) : DataFrame\l+ validate_schema(df)\l+ summarize_class_balance(df)\l+ split_dataset(df) : X_train, X_test,\l  y_train, y_test\l+ run_preprocessing(path)\l}"];
+
+    training [label="{training_module.py||+ cross_validate(X_train, y_train) : dict\l+ train_model(X_train, y_train) : model\l+ save_model(model, cv_results, features)\l+ run_training()\l}"];
+
+    evaluation [label="{evaluation_module.py||+ compute_metrics(model, X_test, y_test)\l+ plot_confusion_matrix(...)\l+ plot_roc_curve(...)\l+ plot_feature_importance(...)\l+ run_evaluation(model, X_test, y_test)\l}"];
+
+    prediction [label="{prediction_module.py||+ load_model() : model\l+ validate_input(df) : DataFrame\l+ predict_patients(input_path, top_n)\l  : list[dict]\l+ main()\l}"];
+
+    logger [label="{logger.py||+ get_logger(name) : Logger\l}"];
+
+    main [label="{main.py (CLI)||+ cmd_build_dataset(args)\l+ cmd_train(args)\l+ cmd_evaluate(args)\l+ cmd_predict(args)\l+ build_parser()\l+ main()\l}"];
+
+    main -> data [label="calls"];
+    main -> preprocessing [label="calls"];
+    main -> training [label="calls"];
+    main -> evaluation [label="calls"];
+    main -> prediction [label="calls"];
+
+    data -> config [style=dashed, label="uses"];
+    preprocessing -> config [style=dashed, label="uses"];
+    training -> config [style=dashed, label="uses"];
+    evaluation -> config [style=dashed, label="uses"];
+    prediction -> config [style=dashed, label="uses"];
+
+    data -> logger [style=dotted];
+    preprocessing -> logger [style=dotted];
+    training -> logger [style=dotted];
+    evaluation -> logger [style=dotted];
+    prediction -> logger [style=dotted];
+
+    training -> preprocessing [label="depends on split"];
+    evaluation -> preprocessing [label="depends on split"];
+    prediction -> training [label="loads saved model", style=dashed];
+}

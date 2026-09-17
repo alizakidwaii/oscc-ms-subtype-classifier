@@ -1,0 +1,35 @@
+digraph UseCase {
+    rankdir=LR;
+    fontname="Helvetica";
+    node [fontname="Helvetica", fontsize=11];
+    edge [fontname="Helvetica", fontsize=10, color="#555555"];
+
+    actor [label="Researcher /\nCourse Evaluator", shape=plaintext, fontsize=12];
+
+    subgraph cluster_system {
+        label="OSCC-MS Subtype Classifier (System Boundary)";
+        fontsize=12;
+        style="rounded";
+        color="#2C5F8A";
+
+        uc1 [label="Build Dataset\n(merge raw TCGA files)", shape=ellipse, style=filled, fillcolor="#EAF2FB", color="#2C5F8A"];
+        uc2 [label="Train Model\n(Random Forest + CV)", shape=ellipse, style=filled, fillcolor="#EAF2FB", color="#2C5F8A"];
+        uc3 [label="Evaluate Model\n(metrics + plots)", shape=ellipse, style=filled, fillcolor="#EAF2FB", color="#2C5F8A"];
+        uc4 [label="Predict Patient Subtype", shape=ellipse, style=filled, fillcolor="#EAF2FB", color="#2C5F8A"];
+        uc5 [label="View Evaluation Results", shape=ellipse, style=filled, fillcolor="#EAF2FB", color="#2C5F8A"];
+        uc6 [label="Run Automated Tests", shape=ellipse, style=filled, fillcolor="#EAF2FB", color="#2C5F8A"];
+
+        uc7 [label="Validate Input Schema", shape=ellipse, style="filled,dashed", fillcolor="#FFF6D9", color="#B8860B"];
+    }
+
+    actor -> uc1;
+    actor -> uc2;
+    actor -> uc3;
+    actor -> uc4;
+    actor -> uc5;
+    actor -> uc6;
+
+    uc4 -> uc7 [label="<<include>>", style=dashed, fontsize=9];
+    uc1 -> uc7 [label="<<include>>", style=dashed, fontsize=9];
+    uc2 -> uc1 [label="<<requires>>", style=dashed, fontsize=9, dir=back];
+}
