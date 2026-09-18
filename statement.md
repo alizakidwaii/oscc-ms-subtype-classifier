@@ -2,26 +2,29 @@
 
 ## Problem Statement
 
-Oral/Head and Neck Squamous Cell Carcinoma (OSCC/HNSC) is not molecularly uniform — TCGA's genomic analysis identified four distinct subtypes based on RNA expression patterns: Basal, Mesenchymal, Atypical, and Classical. Among these, the Mesenchymal (MS) subtype is associated with a more invasive, EMT-driven phenotype and is generally linked to worse outcomes in the literature. Identifying a patient's molecular subtype from gene expression data is something that, done manually, requires specialist knowledge of dozens of marker genes and how their expression patterns interact. This project asks a narrower, answerable version of that problem: given a patient's expression values for a defined panel of literature-backed marker genes, can a machine learning model reliably classify the tumor as Mesenchymal versus Other, and can it do so in a way that's explainable rather than a black box?
+Oral/Head and Neck Squamous Cell Carcinoma (OSCC/HNSC) is not the same at the molecular level in every patient. TCGA research identified four main subtypes based on their RNA expression patterns: **Basal, Mesenchymal, Atypical, and Classical**. Among these, the **Mesenchymal (MS) subtype** is commonly associated with a more invasive and EMT-related nature and has been linked with poorer outcomes in previous studies.
+
+Identifying the molecular subtype using gene expression data can be difficult because it requires knowledge of many marker genes and how their expression patterns relate to each other. Therefore, this project focuses on a simpler and more specific problem: **Can a machine learning model use the expression values of selected marker genes to classify a tumor as Mesenchymal or Other?** The project also aims to understand which genes contribute most to the model's classification, making the prediction easier to interpret.
 
 ## Scope of the Project
 
-- Binary classification only: Mesenchymal (MS) vs Other (Basal + Atypical + Classical combined). The project does not attempt full 4-class subtyping.
-- Restricted to a curated 35-gene panel grounded in existing literature (EMT/mesenchymal markers, epithelial markers, housekeeping controls) rather than the full ~20,000-gene expression matrix, to keep the model interpretable and avoid the curse of dimensionality on a relatively small (279-patient) real-world cohort.
-- Uses real, publicly available TCGA-HNSC data (UCSC Xena expression matrix + the original TCGA Nature 2015 paper's subtype labels), not synthetic or simulated data.
-- Delivered as a command-line pipeline (data ingestion → preprocessing → training → evaluation → prediction), not a web app or GUI — this was a deliberate choice to keep the project fully scriptable and reproducible from the terminal, per the course's executability requirement.
-- Does not cover model deployment, a clinical decision-support interface, or integration with real hospital systems — this is an academic exercise in applying supervised learning to a real biomedical dataset, not a production diagnostic tool.
+* The project performs **binary classification**: Mesenchymal (MS) vs Other, where Other includes Basal, Atypical, and Classical subtypes. It does not perform complete four-class classification.
+* A selected **35-gene panel** based on existing literature is used instead of the complete ~20,000-gene expression dataset. This keeps the model simpler and more interpretable for the available **279-patient dataset**.
+* The project uses **real, publicly available TCGA-HNSC data**, including the UCSC Xena gene expression data and subtype labels from the original TCGA study.
+* The project is implemented as a **command-line pipeline** covering data input, preprocessing, training, evaluation, and prediction. This keeps the system reproducible and suitable for the course requirement of having an executable project.
+* This is an **academic proof-of-concept** and does not include clinical deployment, hospital-system integration, or a clinical decision-support interface. It is not intended to be used as a diagnostic tool.
 
 ## Target Users
 
-- **Primary (for this course submission):** the course evaluator/grader, assessing whether the project correctly applies supervised ML concepts (classification, cross-validation, feature importance, evaluation metrics) to a real dataset.
-- **Illustrative real-world users (the scenario the project is modelled on):** bioinformatics researchers or lab technicians who have gene expression data for a patient sample and want a fast, explainable first-pass classification of molecular subtype, to help prioritize samples for further clinical or research follow-up. This project is a proof of concept for that kind of tool — not a validated clinical instrument.
+* **Primary users:** The course evaluator or grader, who will assess how well the project applies supervised machine learning concepts such as classification, cross-validation, feature importance, and evaluation metrics.
+* **Possible real-world users:** Bioinformatics researchers or laboratory technicians who have gene expression data and want a quick, explainable first-level prediction of the molecular subtype. The results could help in deciding which samples may need further research or clinical investigation.
 
 ## High-Level Features
 
-- Ingests and merges two real public data sources (TCGA gene expression + TCGA subtype labels) into one clean, validated dataset
-- Trains a Random Forest classifier with stratified 5-fold cross-validation
-- Evaluates the model on a held-out test set with standard classification metrics (accuracy, precision, recall, F1, ROC-AUC) plus visual outputs (confusion matrix, ROC curve, feature importance)
-- Predicts the subtype of a new patient from a CSV of gene expression values, returning the predicted class, class probabilities, and the top genes driving that individual prediction
-- Validates all input data (training dataset and new patient CSVs) against an expected schema, so malformed input is rejected with a clear error rather than silently producing a wrong prediction
-- Logs every pipeline run to a log file for traceability
+* Combines **TCGA gene expression data and subtype labels** into a clean and validated dataset.
+* Trains a **Random Forest classifier** using stratified 5-fold cross-validation.
+* Evaluates the model using **accuracy, precision, recall, F1-score, and ROC-AUC**, along with a confusion matrix, ROC curve, and feature-importance visualization.
+* Accepts a new patient's gene expression data in CSV format and predicts whether the sample belongs to the **Mesenchymal or Other** category.
+* Provides **class probabilities and important genes** that contributed to the prediction.
+* Checks the input files against the expected format and gives an error if the data is incorrect.
+* Maintains a **log file** for tracking each pipeline run.
