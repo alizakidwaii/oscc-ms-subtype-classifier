@@ -1,110 +1,147 @@
-# OSCC-MS Subtype Classifier
+ # OSCC-MS Subtype Classifier
 
-A machine learning project that predicts the **Mesenchymal (MS)** molecular subtype of Oral/Head and Neck Squamous Cell Carcinoma (OSCC/HNSC) from a patient's gene expression profile, using a Random Forest classifier.
+A machine learning project that predicts whether a tumor belongs to the **Mesenchymal (MS)** molecular subtype of Oral/Head and Neck Squamous Cell Carcinoma (OSCC/HNSC) using gene expression data and a Random Forest classifier.
 
-This was built for my Fundamentals of AI/ML course project. The idea was simple: pick something from the ML Basics module (classification, feature importance, bias-variance, model evaluation) and apply it to a real problem instead of a toy dataset. I went with cancer subtype classification because it's a genuinely useful application of supervised learning and it let me work with real patient data instead of something synthetic.
+## About the Project
+
+This project was developed as part of my **Fundamentals of AI/ML** course. I wanted to take the concepts we learned in the ML Basics module, such as classification, feature importance, model evaluation, and bias-variance, and apply them to a real-world problem instead of using a simple toy dataset.
+
+I chose cancer subtype classification because it is a practical application of supervised machine learning and allows us to work with real patient gene-expression data.
 
 ## Overview
 
-Head and neck cancer isn't one disease — researchers have identified four molecular subtypes based on gene expression patterns: Basal, Mesenchymal, Atypical, and Classical. The Mesenchymal subtype is of particular clinical interest because it's associated with a more aggressive, invasive tumor phenotype (driven by an EMT-like — epithelial to mesenchymal transition — expression signature).
+Head and neck cancer can be divided into different molecular subtypes based on gene expression patterns. The four major subtypes are **Basal, Mesenchymal, Atypical, and Classical**.
 
-This project trains a Random Forest to answer one question from a patient's gene expression data: **is this tumor Mesenchymal (MS), or something else (Other)?**
+This project focuses on the **Mesenchymal (MS)** subtype, which is associated with an aggressive and invasive tumor phenotype and has an **EMT-like (epithelial-to-mesenchymal transition)** expression pattern.
 
-Given a CSV of expression values for a 35-gene panel, the trained model returns:
-- the predicted subtype (MS / Other)
-- a confidence score for each class
-- the specific genes that most influenced that particular prediction
+The main question the model tries to answer is:
 
-## Features
+**Given a patient's gene expression profile, is the tumor Mesenchymal (MS) or Other?**
 
-- Real dataset — 279 actual TCGA-HNSC patients, not synthetic data
-- End-to-end CLI pipeline: raw data → clean dataset → trained model → evaluation → prediction, all runnable with one command each
-- 5-fold stratified cross-validation during training, not just a single train/test split
-- Evaluation outputs: accuracy, precision, recall, F1, ROC-AUC, confusion matrix plot, ROC curve plot, feature importance plot
-- Per-patient explainability — every prediction comes with the top genes that drove it, not just a bare label
-- Schema validation on both the training dataset and any new patient CSV, so bad input fails with a clear error instead of a silent wrong prediction
-- Logging to both console and a log file for every pipeline run
-- Unit tests covering all five modules
+The model uses expression values from a panel of **35 genes**. For a given patient, it provides:
 
-## Technologies / Tools Used
+* Predicted subtype: **MS / Other**
+* Probability for each class
+* The genes that contributed most to the prediction
 
-- **Python 3.10+**
-- **scikit-learn** — Random Forest classifier, cross-validation, train/test split, evaluation metrics
-- **pandas / numpy** — data loading, merging, and manipulation
-- **matplotlib / seaborn** — confusion matrix, ROC curve, and feature importance plots
-- **openpyxl** — reading the raw Excel-format subtype label file
-- **joblib** — model persistence
-- **pytest** — unit testing
-- **Git / GitHub** — version control
+## Main Features
+
+* Uses a real dataset containing **279 TCGA-HNSC patients**
+* Complete pipeline from raw data processing to prediction
+* Uses **5-fold stratified cross-validation** during training
+* Evaluates the model using accuracy, precision, recall, F1-score, and ROC-AUC
+* Generates confusion matrix, ROC curve, and feature-importance plots
+* Provides gene-level information to help understand individual predictions
+* Checks the input data before training or prediction
+* Gives clear errors when required columns or values are missing
+* Maintains logs for pipeline runs
+* Includes unit tests for the five main modules
+
+## Technologies Used
+
+* **Python 3.10+**
+* **scikit-learn** – Random Forest, cross-validation, data splitting, and evaluation metrics
+* **pandas / numpy** – data processing and manipulation
+* **matplotlib / seaborn** – evaluation and visualization plots
+* **openpyxl** – reading the Excel subtype-label file
+* **joblib** – saving and loading the trained model
+* **pytest** – unit testing
+* **Git / GitHub** – version control
 
 ## Project Structure
 
-```
+```text
 oscc-ms-real/
-├── main.py                     # single CLI entry point
+├── main.py                     # Main command-line entry point
 ├── requirements.txt
-├── statement.md                 # problem statement, scope, target users
+├── statement.md                # Problem statement and project scope
 ├── src/
-│   ├── config.py                # paths, gene panel, hyperparameters
-│   ├── logger.py                # shared logging setup
-│   ├── data_module.py           # Module 1: raw data ingestion & merge
-│   ├── preprocessing_module.py  # Module 2: validation & train/test split
-│   ├── training_module.py       # Module 3: Random Forest + CV training
-│   ├── evaluation_module.py     # Module 4: metrics & plots
-│   └── prediction_module.py     # Module 5: single-patient prediction
-├── tests/                       # pytest unit tests for every module
+│   ├── config.py               # Paths, genes and model settings
+│   ├── logger.py               # Logging setup
+│   ├── data_module.py          # Raw data loading and merging
+│   ├── preprocessing_module.py # Data validation and train/test split
+│   ├── training_module.py      # Random Forest training
+│   ├── evaluation_module.py    # Metrics and plots
+│   └── prediction_module.py    # Prediction for a new patient
+├── tests/                      # Unit tests
 ├── data/
-│   ├── raw/                     # raw source files (see raw/README.md)
-│   ├── oscc_gene_expression.csv # processed real dataset (committed)
-│   └── sample_patient.csv       # example patient for prediction demo
-├── models/                      # trained model + metadata (generated)
-├── outputs/                     # metrics.json + evaluation plots (generated)
-├── logs/                        # app.log (generated)
-└── docs/, reports/               # design documentation and the project report
+│   ├── raw/                    # Original source files
+│   ├── oscc_gene_expression.csv
+│   └── sample_patient.csv
+├── models/                     # Saved trained model
+├── outputs/                    # Metrics and evaluation plots
+├── logs/                       # Log files
+└── docs/, reports/             # Documentation and project report
 ```
 
 ## Requirements
 
-- Python 3.10 or later
-- pip
+* Python **3.10 or later**
+* pip
 
-## Setup / Installation
+## Installation
+
+First, clone the repository:
 
 ```bash
-# 1. Clone the repository
 git clone https://github.com/<your-username>/<your-repo-name>.git
 cd <your-repo-name>
+```
 
-# 2. Create a virtual environment (recommended, keeps things isolated)
+Creating a virtual environment is recommended:
+
+```bash
 python3 -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
+```
 
-# 3. Install dependencies
+Then install the required packages:
+
+```bash
 pip install -r requirements.txt
 ```
 
-No API keys or external services needed. The processed dataset (`data/oscc_gene_expression.csv`) is already committed to the repo, so training and prediction work right after cloning — you don't have to re-download the raw TCGA files unless you specifically want to rebuild the dataset from scratch.
+No API keys or external services are required.
+
+The processed dataset is already included in the project, so the model can be trained without downloading the original TCGA files again. The raw files only need to be downloaded if you want to rebuild the dataset yourself.
 
 ## Running the Project
 
-Everything is driven through `main.py` from the terminal — no GUI required.
+The project can be run directly from the terminal using `main.py`.
+
+### 1. Build the dataset
+
+This step is optional because the processed dataset is already provided.
 
 ```bash
-# (Optional) rebuild the dataset from the raw TCGA source files
-# Not required to run the project — see data/raw/README.md if you want to do this
 python main.py build-dataset
+```
 
-# Train the Random Forest with 5-fold cross-validation
+### 2. Train the model
+
+```bash
 python main.py train
+```
 
-# Evaluate the trained model on the held-out test set
+The Random Forest is trained using **5-fold stratified cross-validation**.
+
+### 3. Evaluate the model
+
+```bash
 python main.py evaluate
+```
 
-# Predict the subtype for a new patient
+This produces the evaluation metrics and plots.
+
+### 4. Predict a new patient
+
+```bash
 python main.py predict --input data/sample_patient.csv
 ```
 
-### Example prediction output
+## Example Prediction
+
+A prediction looks like this:
 
 ```json
 [
@@ -117,40 +154,80 @@ python main.py predict --input data/sample_patient.csv
 ]
 ```
 
-To run a prediction on your own patient data, put it in a CSV with the same 35 gene columns as `data/sample_patient.csv` — the column names need to match `src/config.py::ALL_GENES` exactly, or the pipeline will reject it with a validation error telling you what's missing.
+This means the model classified the sample as **MS**, with a higher predicted probability for MS than Other. It also lists the genes that contributed most to that prediction.
+
+For a new patient, the input CSV must contain the same **35 gene columns** used by the model. The column names must exactly match the gene names defined in `src/config.py`.
 
 ## Testing
+
+The project includes unit tests for the different modules.
+
+Run them using:
 
 ```bash
 pytest tests/ -v
 ```
 
-The test suite covers:
-- schema validation (missing columns, null values, invalid labels all get caught)
-- correctness of the binary label derivation from the original 4-class subtype
-- the train/test split staying stratified and non-overlapping
-- the trained model beating a majority-class baseline and scoring above-chance ROC-AUC
-- prediction output structure and probability sanity checks
+The tests check things such as:
+
+* Missing or invalid columns
+* Null values
+* Incorrect subtype labels
+* Correct conversion of the original four-class subtype into the MS/Other classification
+* Proper stratified train/test splitting
+* Model performance compared with a majority-class baseline
+* Prediction format and probability values
 
 ## Dataset
 
-- **Expression data**: TCGA-HNSC IlluminaHiSeq RNASeqV2 gene expression matrix, downloaded from the UCSC Xena Browser (566 samples x 20,530 genes)
-- **Subtype labels**: TCGA HNSC molecular subtype calls from Supplementary Table S7.2 of the original TCGA Nature 2015 paper on head and neck cancer
-- **Final merged dataset**: 279 patients where both files overlap, subset to a 35-gene literature panel (EMT/mesenchymal markers like VIM, ZEB1/2, SNAI1/2; epithelial markers like CDH1, EPCAM, keratins; housekeeping genes as controls). Binary label: MS = 75 patients, Other = 204 patients.
-- Full source links and re-download steps: `data/raw/README.md`
+The project uses data from **TCGA-HNSC**.
+
+* **Expression data:** TCGA-HNSC IlluminaHiSeq RNASeqV2 gene-expression matrix from the UCSC Xena Browser
+* Original expression dataset: **566 samples × 20,530 genes**
+* **Subtype labels:** TCGA HNSC molecular subtype information from Supplementary Table S7.2 of the TCGA Nature 2015 head and neck cancer study
+* **Final dataset:** 279 patients present in both datasets
+* The final data was reduced to a **35-gene panel** containing EMT/mesenchymal markers, epithelial markers, and housekeeping genes
+* Final labels:
+
+  * **MS:** 75 patients
+  * **Other:** 204 patients
+
+The original data sources and instructions for rebuilding the dataset are available in:
+
+```text
+data/raw/README.md
+```
 
 ## Results
 
-| Metric | Value |
-|---|---|
-| 5-fold CV ROC-AUC | 0.957 |
-| Test accuracy | 0.90 |
-| Test precision (MS) | 0.88 |
-| Test recall (MS) | 0.74 |
-| Test ROC-AUC | 0.964 |
+The current model produced the following results:
 
-The top predictive genes turned out to be VIM, ZEB2, ZEB1, MMP2, and FAP — which lines up with what's expected biologically, since these are all well-known EMT/mesenchymal markers. That was a good sign the model was picking up real signal and not just memorizing noise.
+| Metric              | Value |
+| ------------------- | ----: |
+| 5-fold CV ROC-AUC   | 0.957 |
+| Test Accuracy       |  0.90 |
+| Test Precision (MS) |  0.88 |
+| Test Recall (MS)    |  0.74 |
+| Test ROC-AUC        | 0.964 |
 
-## Screenshots
+The genes that appeared among the most important predictors were **VIM, ZEB2, ZEB1, MMP2, and FAP**. These genes are associated with EMT and mesenchymal characteristics, which is consistent with the biological focus of the project.
 
-See `outputs/confusion_matrix.png`, `outputs/roc_curve.png`, and `outputs/feature_importance.png` after running `python main.py evaluate`.
+## Output Plots
+
+After running:
+
+```bash
+python main.py evaluate
+```
+
+the following plots can be found in the `outputs/` folder:
+
+* `confusion_matrix.png`
+* `roc_curve.png`
+* `feature_importance.png`
+
+## Project Goal
+
+The overall goal of this project is to show how a basic machine learning approach can be applied to a real biological dataset.
+
+Instead of only predicting **MS or Other**, the project also tries to make the prediction easier to understand by showing which genes were important for the model's decision.
